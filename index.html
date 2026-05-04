@@ -1,1 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fuji Sanctuary — A Living System for Collective Transformation</title>
+  <style>
+    :root {
+      --ink: #102033;
+      --ink-soft: #273b50;
+      --paper: #f4ead8;
+      --paper-light: #fbf6ea;
+      --mist: #d8ded6;
+      --lake: #385a68;
+      --blue: #183a58;
+      --sky: #7894a3;
+      --green: #627a5d;
+      --moss: #8e9a78;
+      --rose: #d99a8f;
+      --clay: #b7674f;
+      --gold: #c99a42;
+      --violet: #76608a;
+      --shadow: rgba(16, 32, 51, 0.16);
+      --line: rgba(16, 32, 51, 0.18);
+      --radius: 28px;
+      --max: 1180px;
+    }
 
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 20% 8%, rgba(217,154,143,.28), transparent 28%),
+        radial-gradient(circle at 85% 2%, rgba(201,154,66,.22), transparent 26%),
+        linear-gradient(180deg, #fbf6ea 0%, #f1e7d5 42%, #eef1e8 100%);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .32;
+      mix-blend-mode: multiply;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+      z-index: 9999;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 28px; }
+    .eyebrow {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+    }
+    h1, h2, h3 { margin: 0; line-height: .98; letter-spacing: -0.045em; }
+    h1 { font-size: clamp(54px, 8.4vw, 116px); }
+    h2 { font-size: clamp(40px, 5.4vw, 76px); }
+    h3 { font-size: clamp(24px, 2.6vw, 36px); }
+    p { margin: 0; }
+    .lead { font-size: clamp(20px, 2.1vw, 30px); line-height: 1.25; letter-spacing: -0.02em; color: var(--ink-soft); }
+    .small { font-size: 14px; color: rgba(16,32,51,.72); }
+    .serif { font-family: Georgia, 'Times New Roman', serif; }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(18px);
+      background: rgba(251,246,234,.72);
+      border-bottom: 1px solid rgba(16,32,51,.08);
+    }
+    .nav-inner {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: -.02em;
+    }
+    .seal {
+      width: 38px; height: 38px; border: 1px solid rgba(16,32,51,.22); border-radius: 50%;
+      display: grid; place-items: center; background: rgba(255,255,255,.45);
+      box-shadow: 0 8px 22px rgba(16,32,51,.08);
+    }
+    .seal svg { width: 25px; height: 25px; }
+    .nav-links { display: flex; gap: 18px; font-size: 13px; font-weight: 700; color: rgba(16,32,51,.72); }
+    .nav-links a:hover { color: var(--ink); }
+
+    .hero {
+      min-height: calc(100vh - 72px);
+      display: grid;
+      align-items: center;
+      padding: 76px 0 44px;
+      position: relative;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.02fr .98fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .hero-copy { position: relative; z-index: 3; }
+    .hero h1 { margin-top: 18px; }
+    .hero .lead { margin-top: 26px; max-width: 760px; }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 34px; }
+    .btn {
+      border: 1px solid rgba(16,32,51,.18);
+      padding: 14px 18px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 14px;
+      background: rgba(255,255,255,.42);
+      box-shadow: 0 12px 30px rgba(16,32,51,.08);
+    }
+    .btn.primary { background: var(--ink); color: var(--paper-light); border-color: var(--ink); }
+
+    .hero-art {
+      position: relative;
+      min-height: 620px;
+      border-radius: 38px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(16,32,51,.18);
+      border: 1px solid rgba(16,32,51,.12);
+      background:
+        linear-gradient(180deg, rgba(18,38,58,.06), rgba(18,38,58,.22)),
+        radial-gradient(circle at 55% 14%, rgba(247,210,132,.9) 0 5%, transparent 12%),
+        linear-gradient(180deg, #e8caa5 0%, #7894a3 48%, #17344b 100%);
+    }
+    .hero-art::before {
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(247,220,154,.9), transparent 18%),
+        radial-gradient(circle at 14% 12%, rgba(229,165,151,.45), transparent 24%),
+        linear-gradient(180deg, transparent 0%, rgba(16,32,51,.46) 100%);
+      opacity:.88;
+    }
+    .fuji {
+      position: absolute; left: 50%; top: 30%; transform: translateX(-50%);
+      width: 78%; max-width: 560px; aspect-ratio: 1.6/1; z-index: 2;
+    }
+    .fuji svg { width: 100%; height: 100%; filter: drop-shadow(0 18px 20px rgba(0,0,0,.16)); }
+    .water {
+      position:absolute; left:0; right:0; bottom:0; height:42%; z-index:1;
+      background:
+        repeating-linear-gradient(180deg, rgba(255,255,255,.1) 0 1px, transparent 1px 10px),
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(7,22,36,.55));
+    }
+    .gate {
+      position: absolute;
+      right: 9%; bottom: 10%; width: 150px; height: 240px; z-index:4;
+      border-radius: 18px 18px 4px 4px;
+      border: 1px solid rgba(255,232,177,.34);
+      background: linear-gradient(180deg, rgba(255,232,177,.22), rgba(255,232,177,.05));
+      box-shadow: 0 0 40px rgba(255,212,120,.24), inset 0 0 38px rgba(255,212,120,.18);
+    }
+    .gate::after {
+      content:""; position:absolute; inset:16px; border:1px solid rgba(255,232,177,.3); border-radius: 14px;
+      background: repeating-linear-gradient(90deg, transparent 0 16px, rgba(255,232,177,.16) 16px 18px);
+    }
+    .ritual-circle {
+      position:absolute; left: 13%; bottom: 8%; width: 250px; height: 250px; z-index:3;
+      border-radius:50%;
+      border:1px solid rgba(255,232,177,.55);
+      box-shadow: 0 0 44px rgba(255,212,120,.32), inset 0 0 35px rgba(255,232,177,.18);
+      background: radial-gradient(circle, rgba(255,232,177,.18), transparent 62%);
+    }
+    .ritual-circle::before,
+    .ritual-circle::after {
+      content:""; position:absolute; inset:28px; border-radius:50%; border:1px solid rgba(255,232,177,.4);
+    }
+    .ritual-circle::after { inset:64px; border-style:dashed; }
+    .sakura {
+      position:absolute; z-index:5; left:-6%; top:-4%; width: 44%; height: 34%;
+      background:
+        radial-gradient(circle at 20% 40%, var(--rose) 0 4px, transparent 5px),
+        radial-gradient(circle at 38% 22%, #e7b2a9 0 5px, transparent 6px),
+        radial-gradient(circle at 50% 56%, #d99a8f 0 4px, transparent 5px),
+        radial-gradient(circle at 70% 30%, #efc2b6 0 4px, transparent 5px),
+        linear-gradient(24deg, transparent 47%, rgba(67,55,45,.55) 48% 51%, transparent 52%);
+      opacity:.78;
+      transform: rotate(-8deg);
+    }
+    .floating-note {
+      position:absolute; left: 34px; bottom: 34px; z-index: 6;
+      max-width: 300px;
+      color: #fff;
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(11,28,45,.42);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    .floating-note b { color: #ffe1a0; }
+
+    section { padding: 92px 0; position:relative; }
+    .section-head { max-width: 880px; margin-bottom: 42px; }
+    .section-head h2 { margin-top: 12px; }
+    .section-head .lead { margin-top: 20px; }
+
+    .card {
+      background: rgba(255,255,255,.38);
+      border: 1px solid rgba(16,32,51,.12);
+      border-radius: var(--radius);
+      box-shadow: 0 18px 46px rgba(16,32,51,.08);
+      padding: 28px;
+    }
+    .grid-3 { display:grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .grid-4 { display:grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .grid-2 { display:grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+    .icon {
+      width: 54px; height:54px; border-radius: 50%; display:grid; place-items:center; margin-bottom:18px;
+      color:white; box-shadow: inset 0 0 0 1px rgba(255,255,255,.28), 0 10px 28px rgba(16,32,51,.12);
+    }
+    .icon svg { width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 1.9; }
+    .human { background: var(--clay); }
+    .ai { background: var(--lake); }
+    .nature { background: var(--green); }
+    .cosmic { background: var(--violet); }
+    .card h4 { margin: 0 0 10px; font-size: 18px; letter-spacing: -.02em; }
+
+
+
+    .project-lens {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 34px;
+      align-items: start;
+    }
+    .project-lens .section-head { margin-bottom: 0; }
+    .project-kicker {
+      margin-top: 24px;
+      display: grid;
+      gap: 14px;
+    }
+    .project-kicker p {
+      font-size: 18px;
+      line-height: 1.45;
+      color: var(--ink-soft);
+    }
+    .gold-emphasis {
+      color: #a87518;
+      font-weight: 900;
+    }
+    .project-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .visual-card {
+      min-height: 390px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+    }
+    .visual-card::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 42%;
+      background: linear-gradient(180deg, transparent, rgba(251,246,234,.42));
+      pointer-events: none;
+    }
+    .card-visual {
+      position: relative;
+      height: 138px;
+      margin: 22px -8px -10px;
+      border-radius: 22px;
+      overflow: hidden;
+      background: rgba(251,246,234,.28);
+      border: 1px solid rgba(16,32,51,.08);
+    }
+    .mini-gathering {
+      background:
+        radial-gradient(circle at 50% 50%, rgba(201,154,66,.72) 0 6px, transparent 7px),
+        radial-gradient(circle at 30% 34%, rgba(183,103,79,.48) 0 5px, transparent 6px),
+        radial-gradient(circle at 70% 36%, rgba(56,90,104,.46) 0 5px, transparent 6px),
+        radial-gradient(circle at 34% 72%, rgba(98,122,93,.44) 0 5px, transparent 6px),
+        radial-gradient(circle at 66% 72%, rgba(118,96,138,.44) 0 5px, transparent 6px),
+        repeating-radial-gradient(circle at 50% 50%, transparent 0 22px, rgba(16,32,51,.10) 23px 24px, transparent 25px 44px),
+        linear-gradient(180deg, rgba(255,255,255,.28), rgba(216,222,214,.35));
+    }
+    .mini-landscape {
+      background:
+        radial-gradient(circle at 78% 22%, rgba(247,220,154,.82) 0 20px, transparent 21px),
+        linear-gradient(160deg, transparent 0 58%, rgba(24,58,88,.64) 59% 72%, transparent 73%),
+        linear-gradient(22deg, transparent 0 45%, rgba(98,122,93,.54) 46% 63%, transparent 64%),
+        repeating-linear-gradient(180deg, rgba(255,255,255,.16) 0 1px, transparent 1px 10px),
+        linear-gradient(180deg, rgba(120,148,163,.34), rgba(56,90,104,.36));
+    }
+    .mini-cosmos {
+      background:
+        radial-gradient(circle at 54% 54%, rgba(255,226,163,.82) 0 9px, transparent 10px),
+        radial-gradient(circle at 22% 28%, rgba(255,255,255,.8) 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 18%, rgba(255,255,255,.75) 0 1px, transparent 2px),
+        radial-gradient(circle at 78% 76%, rgba(255,255,255,.62) 0 1px, transparent 2px),
+        radial-gradient(circle at 33% 70%, rgba(255,255,255,.62) 0 1px, transparent 2px),
+        repeating-radial-gradient(circle at 54% 54%, transparent 0 22px, rgba(255,255,255,.16) 23px 24px, transparent 25px 46px),
+        linear-gradient(180deg, #102033, #385a68 72%, #d8ded6);
+    }
+    .project-footline {
+      margin-top: 26px;
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      color: #a87518;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      font-weight: 900;
+    }
+
+    .challenge {
+      background: linear-gradient(180deg, rgba(16,32,51,.94), rgba(18,58,83,.92));
+      color: var(--paper-light);
+      overflow:hidden;
+    }
+    .challenge::before {
+      content:""; position:absolute; inset:-20% -10%; opacity:.17;
+      background: radial-gradient(circle at 20% 20%, var(--gold), transparent 22%), radial-gradient(circle at 80% 10%, var(--rose), transparent 18%), radial-gradient(circle at 54% 80%, #8cc0c6, transparent 24%);
+    }
+    .challenge .lead, .challenge .small { color: rgba(251,246,234,.75); }
+    .challenge .card { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.12); box-shadow:none; }
+
+    .system-map {
+      display: grid;
+      grid-template-columns: .78fr 1.6fr .78fr;
+      gap: 22px;
+      align-items: center;
+    }
+    .intel-stack { display: grid; gap: 14px; }
+    .intel-mini {
+      display:flex; gap:14px; align-items:center; padding:16px; border-radius:22px; background: rgba(255,255,255,.42); border:1px solid rgba(16,32,51,.11);
+    }
+    .intel-mini .dot { width:42px; height:42px; border-radius:50%; flex:0 0 auto; }
+    .circle-diagram {
+      min-height: 600px;
+      position:relative;
+      border-radius: 50%;
+      display:grid;
+      place-items:center;
+      background:
+        radial-gradient(circle, rgba(255,255,255,.56) 0 32%, rgba(255,255,255,.22) 33% 54%, transparent 55%),
+        radial-gradient(circle, rgba(120,148,163,.14), transparent 64%);
+      border: 1px solid rgba(16,32,51,.08);
+    }
+    .center-orb {
+      width: 220px; height: 220px; border-radius:50%; display:grid; place-items:center; text-align:center; padding:24px;
+      background: radial-gradient(circle at 50% 25%, #ffe2a3, #e9d2ad 42%, #c9d5d2 100%);
+      box-shadow: 0 18px 60px rgba(16,32,51,.16), inset 0 0 0 1px rgba(255,255,255,.55);
+      z-index:3;
+    }
+    .center-orb b { font-size: 21px; letter-spacing: -.03em; }
+    .stage {
+      position:absolute; width: 162px; min-height: 112px; border-radius: 24px; padding: 16px;
+      background: rgba(255,255,255,.52); border:1px solid rgba(16,32,51,.12); box-shadow:0 12px 32px rgba(16,32,51,.08);
+      font-size: 13px;
+    }
+    .stage b { display:block; font-size: 14px; margin-bottom:5px; }
+    .s1 { top: 5%; left: calc(50% - 81px); }
+    .s2 { top: 22%; right: 4%; }
+    .s3 { bottom: 28%; right: 4%; }
+    .s4 { bottom: 5%; left: calc(50% - 81px); }
+    .s5 { bottom: 28%; left: 4%; }
+    .s6 { top: 22%; left: 4%; }
+    .stage-arrow {
+      position:absolute; inset:58px; border: 3px solid rgba(56,90,104,.52); border-left-color: transparent; border-bottom-color: transparent; border-radius:50%; transform: rotate(34deg);
+    }
+    .outputs { display:grid; gap:16px; }
+    .output-card { text-align:center; padding:22px; }
+    .output-card .icon { margin:0 auto 14px; background:rgba(98,122,93,.88); }
+
+    .experience-flow { display:grid; gap:14px; }
+    .flow-step {
+      display:grid; grid-template-columns: 90px 1fr; gap:20px; align-items:center; padding:22px;
+      background: rgba(255,255,255,.38); border: 1px solid rgba(16,32,51,.12); border-radius: 26px;
+    }
+    .num { width:68px; height:68px; border-radius:50%; background: var(--ink); color: var(--paper); display:grid; place-items:center; font-weight:900; font-size:22px; }
+    .flow-step h4 { margin:0 0 6px; font-size: 22px; letter-spacing:-.03em; }
+
+    .collab {
+      background: linear-gradient(180deg, rgba(250,244,231,.64), rgba(255,255,255,.2));
+    }
+    .venn {
+      position:relative; min-height:520px; display:grid; place-items:center;
+    }
+    .orb-left, .orb-right {
+      position:absolute; width: 440px; height: 440px; border-radius:50%; opacity:.9; border:1px solid rgba(16,32,51,.08);
+    }
+    .orb-left { left: 8%; background: radial-gradient(circle, rgba(120,148,163,.42), rgba(120,148,163,.08) 70%); }
+    .orb-right { right: 8%; background: radial-gradient(circle, rgba(201,154,66,.32), rgba(201,154,66,.07) 70%); }
+    .venn-center {
+      position:relative; z-index:2; width:min(520px, 90%); padding:38px; border-radius:50%; aspect-ratio:1/1;
+      background: rgba(255,255,255,.48); border:1px solid rgba(16,32,51,.12); box-shadow:0 22px 70px rgba(16,32,51,.11);
+      display:grid; place-items:center; text-align:center;
+    }
+    .venn-center h3 { margin-bottom: 12px; }
+    .collab-label { position:absolute; z-index:3; max-width: 240px; }
+    .collab-label.left { left:4%; top: 18%; }
+    .collab-label.right { right:3%; top:18%; text-align:right; }
+    .collab-label.bottom { left:50%; transform:translateX(-50%); bottom: 9%; text-align:center; max-width: 580px; }
+
+    .impact-row { display:grid; grid-template-columns: repeat(5, 1fr); gap:14px; }
+    .impact-card { padding:22px; min-height: 210px; }
+    .impact-card b { display:block; font-size: 17px; margin-bottom:10px; }
+
+    .quote-band {
+      padding: 62px 0;
+      background: var(--ink);
+      color: var(--paper-light);
+      text-align:center;
+    }
+    .quote-band p { font-size: clamp(28px, 4vw, 60px); line-height:1.03; letter-spacing:-.05em; max-width: 1000px; margin:0 auto; }
+
+    .why-now-list { display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
+    .why-item { display:flex; gap:18px; align-items:flex-start; }
+    .why-item .mark { width:10px; height:10px; border-radius:50%; background: var(--gold); margin-top:9px; flex:0 0 auto; }
+
+    .footer {
+      padding: 70px 0;
+      background:
+        linear-gradient(180deg, rgba(16,32,51,.92), rgba(7,22,36,.98)),
+        radial-gradient(circle at 50% 0%, rgba(201,154,66,.4), transparent 40%);
+      color: var(--paper-light);
+    }
+    .footer-grid { display:grid; grid-template-columns: 1fr 1fr; gap:40px; align-items:end; }
+    .footer .small { color: rgba(251,246,234,.68); }
+
+    @media (max-width: 980px) {
+      .hero-grid, .grid-2, .system-map, .footer-grid, .project-lens { grid-template-columns: 1fr; }
+      .grid-3, .grid-4, .impact-row, .why-now-list { grid-template-columns: 1fr 1fr; }
+      .project-cards { grid-template-columns: 1fr; }
+      .visual-card { min-height: 320px; }
+      .hero-art { min-height: 520px; }
+      .system-map { gap: 34px; }
+      .collab-label { position:relative; inset:auto !important; transform:none !important; text-align:left !important; max-width:100%; }
+      .venn { display:grid; grid-template-columns:1fr; gap:14px; min-height:auto; }
+      .orb-left, .orb-right { display:none; }
+      .venn-center { border-radius: var(--radius); aspect-ratio:auto; }
+    }
+    @media (max-width: 640px) {
+      .nav-links { display:none; }
+      .grid-3, .grid-4, .impact-row, .why-now-list, .project-cards { grid-template-columns: 1fr; }
+      .hero-art { min-height: 470px; }
+      .ritual-circle { width: 180px; height:180px; }
+      .gate { width: 110px; height:190px; }
+      .circle-diagram { min-height: auto; border-radius: var(--radius); padding:20px; display:block; }
+      .center-orb { width:100%; height:auto; border-radius: var(--radius); margin-bottom:14px; }
+      .stage { position:relative; inset:auto !important; width:100%; margin:10px 0; }
+      .stage-arrow { display:none; }
+      .flow-step { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" aria-label="Fuji Sanctuary home">
+        <span class="seal">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M9 46h46L40 20l-8 13-6-8L9 46Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M32 8v12M18 14l8 9M46 14l-8 9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+        </span>
+        <span>Fuji Sanctuary</span>
+      </a>
+      <div class="nav-links">
+        <a href="#project">Project</a>
+        <a href="#system">System</a>
+        <a href="#experience">Experience</a>
+        <a href="#collaboration">Collaboration</a>
+        <a href="#impact">Impact</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <header class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">State of the World Forum Award Proposal</div>
+          <h1 class="serif">A living system for collective transformation.</h1>
+          <p class="lead">Fuji Sanctuary is an immersive, participatory experience where human, artificial, natural, and cosmic intelligences meet — helping people feel how collective intelligence emerges and how a more coherent future can be shaped together.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#project">Explore the project</a>
+            <a class="btn" href="#collaboration">See the collaboration</a>
+          </div>
+        </div>
+        <div class="hero-art" aria-label="Mount Fuji at sunset with symbolic ritual space">
+          <div class="sakura"></div>
+          <div class="fuji">
+            <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet">
+              <path d="M70 420 C180 340 270 230 400 62 C520 225 628 350 735 420 Z" fill="#20394e"/>
+              <path d="M400 62 C360 135 335 180 300 230 C342 212 370 230 400 198 C427 229 467 215 500 232 C470 178 442 130 400 62 Z" fill="#f6ead6" opacity=".92"/>
+              <path d="M70 420 C210 360 330 365 400 420 C480 360 628 365 735 420 Z" fill="#31566a" opacity=".7"/>
+              <path d="M186 382 C310 320 508 320 618 388" fill="none" stroke="#7894a3" stroke-width="8" opacity=".35"/>
+            </svg>
+          </div>
+          <div class="gate"></div>
+          <div class="ritual-circle"></div>
+          <div class="water"></div>
+          <div class="floating-note small"><b>Not a performance to watch.</b><br/>A shared field to enter, sense, and transform.</div>
+        </div>
+      </div>
+    </header>
+
+    <section id="project">
+      <div class="wrap">
+        <div class="project-lens">
+          <div class="section-head">
+            <div class="eyebrow">What this is</div>
+            <h2 class="serif">An immersive ritual system, grounded in a sacred place.</h2>
+            <div class="project-kicker">
+              <p>The project translates the Forum’s theme — uniting intelligences — into a living environment set within the sacred landscape of Fuji Sanctuary in Japan.</p>
+              <p><span class="gold-emphasis">193 participants, each representing a different country,</span> come together to enter a shared system — not as observers, but as active agents.</p>
+              <p>Through their interactions, decisions, and relationships, collective intelligence is not explained. It emerges in real time.</p>
+            </div>
+          </div>
+          <div class="project-cards">
+            <div class="card">
+              <div class="icon human"><svg viewBox="0 0 48 48"><circle cx="24" cy="15" r="7"/><path d="M12 42v-5c0-8 6-13 12-13s12 5 12 13v5"/></svg></div>
+              <h4>Participatory</h4>
+              <p class="small">Everyone is an active contributor. The experience unfolds through choices, reflection, attention, and embodied collaboration.</p>
+            </div>
+            <div class="card">
+              <div class="icon nature"><svg viewBox="0 0 48 48"><path d="M25 42C16 32 12 22 18 12c11 2 17 10 15 21-2 7-8 9-8 9Z"/><path d="M24 41V18M24 30l8-7M24 33l-9-6"/></svg></div>
+              <h4>Living System</h4>
+              <p class="small">The world responds to the collective state of the group. Nothing is merely decorative; every action influences the field.</p>
+            </div>
+            <div class="card">
+              <div class="icon ai"><svg viewBox="0 0 48 48"><path d="M18 8c-5 0-8 4-8 9 0 3 2 6 5 7-3 1-5 4-5 8 0 5 4 8 8 8M30 8c5 0 8 4 8 9 0 3-2 6-5 7 3 1 5 4 5 8 0 5-4 8-8 8M24 8v32M17 18h14M17 30h14"/></svg></div>
+              <h4>Multi-Intelligence</h4>
+              <p class="small">Human, artificial, nature, and cosmic intelligences interact inside one ritual architecture.</p>
+            </div>
+          </div>
+        </div>
+        <div class="project-footline">
+          <span>A sacred place</span><span>•</span><span>A global gathering</span><span>•</span><span>A living future</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="challenge">
+      <div class="wrap grid-2" style="position:relative; z-index:2; align-items:center;">
+        <div class="section-head" style="margin:0;">
+          <div class="eyebrow">The global challenge</div>
+          <h2 class="serif">We are not short on intelligence. We are short on alignment.</h2>
+        </div>
+        <div class="card">
+          <p class="lead">Humanity now lives among powerful forms of intelligence — human creativity, AI systems, ecological knowledge, and spiritual longing. Yet our systems still fragment, extract, and fail because these intelligences rarely act in coherence.</p>
+          <br />
+          <p>Fuji Sanctuary creates a safe, beautiful, and rigorous environment where participants can rehearse a different possibility: not control, not optimization, but collective coherence.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="system">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">How collective intelligence emerges</div>
+          <h2 class="serif">Four intelligences. One living system.</h2>
+          <p class="lead">The experience is designed as a feedback loop: perception, action, consequence, realization, reconfiguration, and alignment.</p>
+        </div>
+
+        <div class="system-map">
+          <div class="intel-stack">
+            <div class="intel-mini"><span class="dot human"></span><div><b>Human Intelligence</b><p class="small">emotion, creativity, intention, cultural wisdom</p></div></div>
+            <div class="intel-mini"><span class="dot ai"></span><div><b>Artificial Intelligence</b><p class="small">reflection, pattern recognition, adaptive guidance</p></div></div>
+            <div class="intel-mini"><span class="dot nature"></span><div><b>Nature Intelligence</b><p class="small">cycles, interdependence, ecological wisdom</p></div></div>
+            <div class="intel-mini"><span class="dot cosmic"></span><div><b>Cosmic Intelligence</b><p class="small">wholeness, mystery, spiritual connection</p></div></div>
+          </div>
+
+          <div class="circle-diagram">
+            <div class="stage-arrow"></div>
+            <div class="center-orb"><div><b>A Shared Living System</b><p class="small">Every action influences the whole. Together, participants shape the outcome.</p></div></div>
+            <div class="stage s1"><b>1. Reflection</b>Participants see themselves as part of a system.</div>
+            <div class="stage s2"><b>2. Action</b>Groups make choices from partial perspectives.</div>
+            <div class="stage s3"><b>3. Consequence</b>The environment reveals real-time impact.</div>
+            <div class="stage s4"><b>4. Realization</b>Participants understand interdependence.</div>
+            <div class="stage s5"><b>5. Reconfiguration</b>New groupings form across difference.</div>
+            <div class="stage s6"><b>6. Alignment</b>A coherent collective field emerges.</div>
+          </div>
+
+          <div class="outputs">
+            <div class="card output-card"><div class="icon"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="14"/><path d="M24 10v28M10 24h28"/></svg></div><b>Collective Intelligence</b><p class="small">shared awareness, trust, and co-created solutions</p></div>
+            <div class="card output-card"><div class="icon"><svg viewBox="0 0 48 48"><path d="M8 24c8-14 24-14 32 0-8 14-24 14-32 0Z"/><circle cx="24" cy="24" r="6"/></svg></div><b>System Coherence</b><p class="small">better alignment between people, technology, and nature</p></div>
+            <div class="card output-card"><div class="icon"><svg viewBox="0 0 48 48"><path d="M24 42V10M24 20c-8 0-13-4-15-10 9 0 13 4 15 10Zm0 8c8 0 13-4 15-10-9 0-13 4-15 10Z"/></svg></div><b>Regenerative Outcomes</b><p class="small">positive impact for people, communities, and planet</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience" style="background:rgba(255,255,255,.22);">
+      <div class="wrap grid-2" style="align-items:start;">
+        <div class="section-head" style="position:sticky; top:110px;">
+          <div class="eyebrow">What happens</div>
+          <h2 class="serif">Participants enter a world that reflects them back.</h2>
+          <p class="lead">The narrative is not the whole project. It is the emotional language that lets participants feel the system.</p>
+          <br />
+          <p>The Sun begins to fade. Mother Earth weakens. Participants are mirrored as symbolic elemental beings and asked to act. Their choices reshape the world. When fragmented action creates imbalance, they must reorganize into a more coherent collective.</p>
+        </div>
+        <div class="experience-flow">
+          <div class="flow-step"><div class="num">01</div><div><h4>Enter the threshold</h4><p class="small">Participants arrive, slow down, and cross from ordinary reality into a shared ritual field.</p></div></div>
+          <div class="flow-step"><div class="num">02</div><div><h4>Receive a living mirror</h4><p class="small">Through reflection, AI, or biofeedback, each participant receives a symbolic form — an avatar or elemental identity that reveals their role in the system.</p></div></div>
+          <div class="flow-step"><div class="num">03</div><div><h4>Act from partial intelligence</h4><p class="small">Groups make decisions from their own perspective. They may be sincere, creative, and intelligent — yet incomplete.</p></div></div>
+          <div class="flow-step"><div class="num">04</div><div><h4>Witness consequence</h4><p class="small">The world responds. The group sees how individual or isolated choices can create system-level imbalance.</p></div></div>
+          <div class="flow-step"><div class="num">05</div><div><h4>Reorganize through difference</h4><p class="small">Participants shift into new constellations, learning that unity does not require sameness. Coherence emerges through relation.</p></div></div>
+          <div class="flow-step"><div class="num">06</div><div><h4>Restore the field</h4><p class="small">Through embodied collaboration, sound, light, movement, and intention, the living system returns to balance.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="collaboration" class="collab">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">The partnership</div>
+          <h2 class="serif">A collaboration where innovation meets living tradition.</h2>
+          <p class="lead">The project is submitted as a joint initiative with Fuji Sanctuary, grounded in its long-standing peace mission and strengthened by Radiant IRIS’s immersive storytelling and technology practice.</p>
+        </div>
+        <div class="venn">
+          <div class="orb-left"></div>
+          <div class="orb-right"></div>
+          <div class="collab-label left card">
+            <div class="eyebrow">Radiant IRIS</div>
+            <h4>Experience, story, technology</h4>
+            <p class="small">Creative direction, participatory system design, AI reflection, biofeedback, storyworlds, global outreach, and immersive production.</p>
+          </div>
+          <div class="collab-label right card">
+            <div class="eyebrow">Fuji Sanctuary</div>
+            <h4>Place, ritual, peace lineage</h4>
+            <p class="small">Sacred land, cultural guidance, prayer tradition, community networks, local stewardship, and decades of peace-centered practice.</p>
+          </div>
+          <div class="venn-center">
+            <div>
+              <div class="eyebrow">Together we create</div>
+              <h3 class="serif">Fuji Sanctuary</h3>
+              <p>A living system where tradition, technology, human creativity, and nature intelligence come together to heal, learn, and co-create.</p>
+            </div>
+          </div>
+          <div class="collab-label bottom card">
+            <b>Shared strength:</b> a purpose-driven partnership with global vision, local roots, complementary expertise, and a shared commitment to peace, Mother Earth, and collective transformation.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="impact">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Why it matters</div>
+          <h2 class="serif">Built for people, communities, and planet.</h2>
+          <p class="lead">The impact is emotional, behavioral, and systemic: participants do not simply understand interdependence — they practice it.</p>
+        </div>
+        <div class="impact-row">
+          <div class="card impact-card"><b>Individual transformation</b><p class="small">Deep self-awareness, embodied reflection, and reconnection to one’s inner capacity for peace.</p></div>
+          <div class="card impact-card"><b>Collective alignment</b><p class="small">New models of trust, cooperation, dialogue, and shared decision-making.</p></div>
+          <div class="card impact-card"><b>Ecological harmony</b><p class="small">A felt understanding of living systems and more regenerative ways of acting.</p></div>
+          <div class="card impact-card"><b>AI for reflection</b><p class="small">A model for using AI as a mirror for awareness rather than a replacement for wisdom.</p></div>
+          <div class="card impact-card"><b>Scalable prototype</b><p class="small">A replicable framework for education, leadership, climate dialogue, cultural exchange, and systems change.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="quote-band">
+      <div class="wrap">
+        <p class="serif">We do not simulate the future. We experience how it is shaped — together.</p>
+      </div>
+    </section>
+
+    <section id="why-now">
+      <div class="wrap grid-2" style="align-items:start;">
+        <div class="section-head" style="margin:0;">
+          <div class="eyebrow">Why now</div>
+          <h2 class="serif">A timely response to a fragmented world.</h2>
+        </div>
+        <div class="why-now-list">
+          <div class="card why-item"><span class="mark"></span><div><b>AI is accelerating.</b><p class="small">We need ways to relate to artificial intelligence through ethics, embodiment, and collective wisdom.</p></div></div>
+          <div class="card why-item"><span class="mark"></span><div><b>Ecological systems are under pressure.</b><p class="small">We need experiences that reconnect decision-making with living systems.</p></div></div>
+          <div class="card why-item"><span class="mark"></span><div><b>Communities are fragmented.</b><p class="small">We need new cultural forms that rebuild trust, belonging, and shared imagination.</p></div></div>
+          <div class="card why-item"><span class="mark"></span><div><b>Old models of change are not enough.</b><p class="small">The future requires collective intelligence — not only individual insight.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="wrap footer-grid">
+        <div>
+          <div class="eyebrow">Aligned with State of the World Forum's vision</div>
+          <h2 class="serif" style="margin-top:12px;">Different intelligences. One living system. A future we create together.</h2>
+        </div>
+        <div>
+          <p class="lead" style="color:rgba(251,246,234,.86);">Fuji Sanctuary is a prototype for collective transformation: a ritual, a system, and a shared field where peace is not declared — but practiced.</p>
+          <br />
+          <p class="small">Radiant IRIS × Fuji Sanctuary</p>
+        </div>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
